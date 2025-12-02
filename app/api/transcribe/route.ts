@@ -26,11 +26,17 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Validate file type
-    const validTypes = ['audio/mpeg', 'audio/mp3', 'audio/wav', 'audio/m4a', 'video/mp4', 'video/webm', 'audio/webm'];
-    if (!validTypes.some(type => file.type.includes(type.split('/')[1]))) {
+    // Validate file type by MIME type or extension
+    const validMimeTypes = ['audio/mpeg', 'audio/mp3', 'audio/wav', 'audio/x-wav', 'audio/m4a', 'audio/mp4', 'video/mp4', 'video/webm', 'audio/webm'];
+    const validExtensions = ['mp3', 'mp4', 'wav', 'm4a', 'webm', 'mpeg', 'mpga'];
+    const fileExtension = file.name.split('.').pop()?.toLowerCase() || '';
+
+    const isValidMime = validMimeTypes.some(type => file.type.includes(type.split('/')[1]));
+    const isValidExtension = validExtensions.includes(fileExtension);
+
+    if (!isValidMime && !isValidExtension) {
       return NextResponse.json(
-        { error: `Invalid file type: ${file.type}. Supported: mp3, mp4, wav, m4a, webm` },
+        { error: `Invalid file type: ${file.type} (${file.name}). Supported: mp3, mp4, wav, m4a, webm` },
         { status: 400 }
       );
     }
