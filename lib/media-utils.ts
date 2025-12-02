@@ -50,13 +50,17 @@ export async function hasAudioTrack(videoFile: File): Promise<boolean> {
 
     video.onloadedmetadata = () => {
       // Different browsers expose audio detection differently
+      // Using type assertion for browser-specific properties
+      const videoEl = video as HTMLVideoElement & {
+        mozHasAudio?: boolean;
+        webkitAudioDecodedByteCount?: number;
+        audioTracks?: { length: number };
+      };
+
       const hasAudio =
-        // @ts-ignore - Firefox
-        video.mozHasAudio ||
-        // @ts-ignore - Safari
-        Boolean(video.webkitAudioDecodedByteCount) ||
-        // Modern browsers
-        Boolean(video.audioTracks && video.audioTracks.length > 0);
+        videoEl.mozHasAudio ||
+        Boolean(videoEl.webkitAudioDecodedByteCount) ||
+        Boolean(videoEl.audioTracks && videoEl.audioTracks.length > 0);
 
       URL.revokeObjectURL(video.src);
       resolve(hasAudio);

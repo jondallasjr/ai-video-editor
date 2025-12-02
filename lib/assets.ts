@@ -1,7 +1,7 @@
 import { v4 as uuidv4 } from 'uuid';
 import { db } from './db';
 import type { Asset } from './types';
-import { determineAssetType, getMediaDuration, extractVideoFrames, hasAudioTrack } from './media-utils';
+import { determineAssetType, getMediaDuration, extractVideoFrames } from './media-utils';
 
 /**
  * Handle file upload and store in IndexedDB
